@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "int32.h": "c",
+        "int32__type_support.h": "c",
+        "int32__functions.h": "c",
+        "int32__struct.h": "c",
+        "twist.h": "c",
+        "vector3.h": "c",
+        "point.h": "c",
+        "point__struct.h": "c",
+        "point__type_support.h": "c",
+        "point__functions.h": "c",
+        "vector": "c"
+    }
+}

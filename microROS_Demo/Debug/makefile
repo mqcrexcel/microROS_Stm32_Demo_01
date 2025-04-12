@@ -14,6 +14,7 @@ RM := rm -rf
 -include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
+-include Drivers/Custom_ROS_Driver/complex_msgs/msg/detail/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/microros_transports/subdir.mk
 -include Core/Src/subdir.mk
@@ -66,8 +67,8 @@ all:
 main-build: microROS_Demo.elf secondary-outputs
 
 # Tool invocations
-microROS_Demo.elf microROS_Demo.map: $(OBJS) $(USER_OBJS) /home/mqcrexcel/Documents/Robotics/micro_ROS/microROS_Demo/STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "microROS_Demo.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/mqcrexcel/Documents/Robotics/micro_ROS/microROS_Demo/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="microROS_Demo.map" -Wl,--gc-sections -static -L../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+microROS_Demo.elf microROS_Demo.map: $(OBJS) $(USER_OBJS) /home/mqcrexcel/Documents/Robotics/micro_ROS/microROS_Stm32_Demo_01/microROS_Demo/STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "microROS_Demo.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/mqcrexcel/Documents/Robotics/micro_ROS/microROS_Stm32_Demo_01/microROS_Demo/STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="microROS_Demo.map" -Wl,--gc-sections -static -L../micro_ros_stm32cubemx_utils/microros_static_library_ide/libmicroros --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -87,7 +88,7 @@ clean:
 	-@echo ' '
 
 pre-build:
-	docker pull microros/micro_ros_static_library_builder:humble && docker run --rm -v /home/mqcrexcel/Documents/Robotics/micro_ROS/microROS_Demo:/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:humble
+	docker pull microros/micro_ros_static_library_builder:humble && docker run --rm -v /home/mqcrexcel/Documents/Robotics/micro_ROS/microROS_Stm32_Demo_01/microROS_Demo:/project --env MICROROS_LIBRARY_FOLDER=micro_ros_stm32cubemx_utils/microros_static_library_ide microros/micro_ros_static_library_builder:humble
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

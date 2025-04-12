@@ -34,6 +34,9 @@
 #include <rmw_microros/rmw_microros.h>
 
 #include <std_msgs/msg/int32.h>
+#include <geometry_msgs/msg/twist.h>
+#include <geometry_msgs/msg/vector3.h>
+#include <geometry_msgs/msg/point.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -353,11 +356,24 @@ void StartDefaultTask(void *argument)
   // micro-ROS app
 
   rcl_publisher_t publisher;
-  std_msgs__msg__Int32 msg;
-//  std_msgs__msg__Int32__Sequence msg_array[5] = {1,2,3,4,5};
+  rcl_publisher_t int32_publisher;
+
+  geometry_msgs__msg__Point msg;
+  std_msgs__msg__Int32 int32_msg;
+
   rclc_support_t support;
   rcl_allocator_t allocator;
   rcl_node_t node;
+
+
+  msg.x = 0.0;  // Red
+  msg.y = 0.0;  // Green
+  msg.z = 0.0;  // Blue
+  // msg.angular.x = 0.0; // Not used
+  // msg.angular.y = 0.0; // Not used
+  // msg.angular.z = 0.0; // Not used
+
+  int32_msg.data = 0;  
 
   allocator = rcl_get_default_allocator();
 
@@ -371,22 +387,56 @@ void StartDefaultTask(void *argument)
   rclc_publisher_init_default(
     &publisher,
     &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
-    "cubemx_publisher_01");
+    ROSIDL_GET_MSG_TYPE_SUPPORT(geometry_msgs, msg, Point), // (std_msgs, msg, Int32)
+    "rgb_led_values");
+    
 
-  msg.data = 0;
+  rclc_publisher_init_default(
+    &int32_publisher,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
+    "counter_value");
+
+
+  double red = 0.0;
+  double green = 0.0;
+  double blue = 0.0;
+
+  int counter = 0;
 
   for(;;)
   {
+
+    // Update RGB values (example pattern)
+    red = (red + 0.1f) >= 1.0f ? 0.0f : red + 0.1f;
+    green = (green + 0.05f) >= 1.0f ? 0.0f : green + 0.05f;
+    blue = (blue + 0.02f) >= 1.0f ? 0.0f : blue + 0.02f;    
+
+    // Set the RGB values in the Twist message
+    msg.x = red;    // Red channel
+    msg.y = green;  // Green channel
+    msg.z = blue;   // Blue channel
+
+    // Update Int32 message
+    int32_msg.data = counter++;
+
     rcl_ret_t ret = rcl_publish(&publisher, &msg, NULL);
     if (ret != RCL_RET_OK)
     {
       printf("Error publishing (line %d)\n", __LINE__); 
     }
     
-    msg.data++;
-    osDelay(10);
+    // Publish Int32 message
+    rcl_ret_t int_ret = rcl_publish(&int32_publisher, &int32_msg, NULL);
+    if (int_ret != RCL_RET_OK)
+    {
+      printf("Error publishing int32 message (line %d)\n", __LINE__); 
+    }
+
+    // msg.data++;
+    osDelay(100);
   }
+
   /* USER CODE END 5 */
 }
 
